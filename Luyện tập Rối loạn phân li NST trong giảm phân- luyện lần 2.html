@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Di Truyền - Rối Loạn Giảm Phân</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Cấu hình và tải MathJax để xử lý LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #eef2ff;
+            --male-color: #0284c7;
+            --male-bg: #f0f9ff;
+            --female-color: #db2777;
+            --female-bg: #fdf2f8;
+            --combine-color: #059669;
+            --combine-bg: #ecfdf5;
+            --text-main: #1e293b;
+            --bg-body: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; padding: 20px; }
+        .main-container { max-width: 950px; margin: 0 auto; }
+        
+        .page-header { text-align: center; margin-bottom: 30px; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .page-header h1 { color: #1e1b4b; font-size: 1.8rem; font-weight: 800; }
+
+        .exercise-card { background: #ffffff; border-radius: 20px; padding: 30px; margin-bottom: 35px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        .ex-title { color: var(--primary); font-size: 1.3rem; font-weight: 800; margin-bottom: 15px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 10px; }
+        
+        .problem-statement { background-color: #f1f5f9; border-left: 5px solid var(--primary); padding: 15px; border-radius: 0 12px 12px 0; font-size: 0.95rem; margin-bottom: 20px; }
+        
+        .base-info { display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+        .info-pill { background: var(--primary-light); color: var(--primary); padding: 6px 16px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; }
+
+        .gamete-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 768px) { .gamete-grid { grid-template-columns: 1fr; } }
+
+        .gamete-card { border-radius: 14px; padding: 15px; border: 1.5px solid; }
+        .gamete-card.male { background: var(--male-bg); border-color: #bae6fd; }
+        .gamete-card.female { background: var(--female-bg); border-color: #fbcfe8; }
+
+        .sub-group { background: #fff; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; margin: 4px 0; }
+
+        .blank-input { width: 65px; padding: 4px 6px; border: 2px dashed #94a3b8; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.9rem; outline: none; }
+        .blank-input.correct { border-color: #10b981 !important; border-style: solid; background-color: #ecfdf5; color: #047857; }
+        .blank-input.wrong { border-color: #ef4444 !important; border-style: solid; background-color: #fef2f2; color: #b91c1c; }
+
+        .correct-hint { font-size: 0.75rem; color: #dc2626; font-weight: bold; display: none; margin-left: 4px; }
+
+        .section-combination { background-color: var(--combine-bg); border: 1.5px solid #a7f3d0; border-radius: 14px; padding: 15px; margin-bottom: 20px; }
+        .case-box { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; font-size: 0.88rem; }
+
+        .direct-answer-box { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 14px; padding: 20px; margin-top: 15px; }
+        .q-row { margin-bottom: 15px; }
+        .q-row label { font-weight: 700; display: block; margin-bottom: 5px; font-size: 0.95rem; }
+
+        .solution-box { display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-top: 15px; font-size: 0.95rem; color: #166534; line-height: 1.8; }
+        .solution-box h4 { font-size: 1.05rem; color: #15803d; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+        .score-board { display: none; background: #fefce8; border: 2px solid #fde047; border-radius: 14px; padding: 15px; margin-top: 20px; text-align: center; }
+        .score-number { font-size: 1.5rem; font-weight: 800; color: #ca8a04; }
+
+        .action-area { margin-top: 20px; text-align: center; display: flex; justify-content: center; gap: 10px; }
+        .btn { padding: 8px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 0.9rem; }
+        .btn-submit { background: var(--primary); color: white; }
+        .btn-reset { background: #e2e8f0; color: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+
+    <div class="page-header">
+        <h1><i class="fa-solid fa-square-poll-vertical"></i> PHIẾU BÀI TẬP DI TRUYỀN HỌC</h1>
+        <p>Luyện tập Rối loạn phân li NST trong giảm phân (Thang điểm 1 / bài)</p>
+    </div>
+
+    <!-- ==================== BÀI TẬP 1 ==================== -->
+    <div class="exercise-card" id="ex1">
+        <div class="ex-title"><i class="fa-solid fa-list-check"></i> Bài Tập 1: Hướng Dẫn Từng Bước Chi Tiết</div>
+        <div class="problem-statement">
+            <strong>Đề bài:</strong> Ở một loài thực vật tự thụ phấn có $2n = 12$. Trong quá trình giảm phân I, có <b>20% tế bào sinh giao tử đực</b> và <b>30% tế bào sinh giao tử cái</b> không phân li ở cặp NST số 1, giảm phân II diễn ra bình thường. Các cặp NST khác phân li bình thường.
+            <br><b>Yêu cầu:</b> Điền vào sơ đồ các bước để tính toán tỉ lệ giao tử và hợp tử đột biến.
+        </div>
+
+        <div class="base-info">
+            <div class="info-pill">$2n = 12$</div>
+            <div class="info-pill" style="background:#fff; border:1px solid #cbd5e1;">$n =$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="6"> <span class="correct-hint">(Đ/A: 6)</span>
+            </div>
+        </div>
+
+        <div class="gamete-grid">
+            <div class="gamete-card male">
+                <strong>1. Giao tử đực (20% ĐB)</strong>
+                <div class="sub-group" style="margin-top:8px;">
+                    <div class="item-row"><span>• Giao tử $(n + 1 = 7)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="10">% <span class="correct-hint">(10%)</span></div></div>
+                    <div class="item-row"><span>• Giao tử $(n - 1 = 5)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="10">% <span class="correct-hint">(10%)</span></div></div>
+                </div>
+                <div class="sub-group">
+                    <div class="item-row"><span>• Giao tử $(n = 6)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="80">% <span class="correct-hint">(80%)</span></div></div>
+                </div>
+            </div>
+
+            <div class="gamete-card female">
+                <strong>2. Giao tử cái (30% ĐB)</strong>
+                <div class="sub-group" style="margin-top:8px;">
+                    <div class="item-row"><span>• Giao tử $(n + 1 = 7)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="15">% <span class="correct-hint">(15%)</span></div></div>
+                    <div class="item-row"><span>• Giao tử $(n - 1 = 5)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="15">% <span class="correct-hint">(15%)</span></div></div>
+                </div>
+                <div class="sub-group">
+                    <div class="item-row"><span>• Giao tử $(n = 6)$:</span><div><input type="text" class="blank-input" data-ex="1" data-ans="70">% <span class="correct-hint">(70%)</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-combination">
+            <strong>3. Tổ hợp tạo hợp tử 13 NST $(2n + 1 = 13)$</strong>
+            <div class="case-box" style="margin-top:8px;">
+                TH 1: Đực $(n + 1) \times$ Cái $(n) =$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="10">% $\times$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="70">% $=$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="7">% <span class="correct-hint">(7%)</span>
+            </div>
+            <div class="case-box">
+                TH 2: Đực $(n) \times$ Cái $(n + 1) =$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="80">% $\times$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="15">% $=$ 
+                <input type="text" class="blank-input" data-ex="1" data-ans="12">% <span class="correct-hint">(12%)</span>
+            </div>
+            <div style="font-weight:700; margin-top:8px; text-align:right;">
+                $\Rightarrow$ Tổng hợp tử $(2n + 1) =$ <input type="text" class="blank-input" data-ex="1" data-ans="19">% <span class="correct-hint">(19%)</span>
+            </div>
+        </div>
+
+        <div class="score-board" id="scoreBoard1">
+            <div class="score-number" id="scoreVal1">0 / 1.0</div>
+            <p id="comment1"></p>
+        </div>
+
+        <div class="action-area">
+            <button class="btn btn-submit" onclick="checkEx1()"><i class="fa-solid fa-check"></i> Nộp Bài 1</button>
+            <button class="btn btn-reset" onclick="resetEx(1)">Làm lại</button>
+        </div>
+    </div>
+
+    <!-- ==================== BÀI TẬP 2 ==================== -->
+    <div class="exercise-card" id="ex2">
+        <div class="ex-title"><i class="fa-solid fa-pen-clip"></i> Bài Tập 2: Nhập Đáp Án Trực Tiếp</div>
+        <div class="problem-statement">
+            <strong>Đề bài:</strong> Ở một loài thực vật tự thụ phấn có $2n = 16$. Trong quá trình giảm phân I, có <b>10% tế bào sinh giao tử đực</b> và <b>40% tế bào sinh giao tử cái</b> có cặp NST số 2 không phân li, giảm phân II diễn ra bình thường.
+        </div>
+
+        <div class="direct-answer-box">
+            <div class="q-row">
+                <label>a) Tỉ lệ giao tử cái đột biến mang 9 NST $(n + 1)$ là bao nhiêu %?</label>
+                <input type="text" class="blank-input" data-ex="2" data-ans="20" style="width:100px;"> %
+                <span class="correct-hint">(Đáp án: 20%)</span>
+            </div>
+            <div class="q-row">
+                <label>b) Tỉ lệ hợp tử đột biến thể ba mang 17 NST $(2n + 1)$ thu được là bao nhiêu %?</label>
+                <input type="text" class="blank-input" data-ex="2" data-ans="21" style="width:100px;"> %
+                <span class="correct-hint">(Đáp án: 21%)</span>
+            </div>
+        </div>
+
+        <div class="solution-box" id="sol2">
+            <h4><i class="fa-solid fa-lightbulb"></i> Chi tiết cách giải Bài 2:</h4>
+            <p><b>1. Tính tỉ lệ giao tử:</b></p>
+            <p>• Tế bào sinh giao tử cái: $40\%$ ĐB $\rightarrow$ tạo $20\%$ giao tử $(n + 1 = 9)$, $20\%$ giao tử $(n - 1 = 7)$, và $60\%$ giao tử bình thường $(n = 8)$.</p>
+            <p>• Tế bào sinh giao tử đực: $10\%$ ĐB $\rightarrow$ tạo $5\%$ giao tử $(n + 1 = 9)$, $5\%$ giao tử $(n - 1 = 7)$, và $90\%$ giao tử bình thường $(n = 8)$.</p>
+            <p><b>2. Trả lời câu hỏi:</b></p>
+            <p>• <b>Câu a:</b> Tỉ lệ giao tử cái $(n + 1) = 40\% / 2 = \mathbf{20\%}$.</p>
+            <p>• Hợp tử thể ba $(2n + 1 = 17)$ kết hợp từ:</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- TH1: Đực $(n + 1) \times$ Cái $(n) = 5\% \times 60\% = 3\%$</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- TH2: Đực $(n) \times$ Cái $(n + 1) = 90\% \times 20\% = 18\%$</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;$\Rightarrow$ Tổng tỉ lệ hợp tử thể ba $= 3\% + 18\% = \mathbf{21\%}$.</p>
+        </div>
+
+        <div class="score-board" id="scoreBoard2">
+            <div class="score-number" id="scoreVal2">0 / 1.0</div>
+            <p id="comment2"></p>
+        </div>
+
+        <div class="action-area">
+            <button class="btn btn-submit" onclick="checkEx2()"><i class="fa-solid fa-check"></i> Nộp Bài 2</button>
+            <button class="btn btn-reset" onclick="resetEx(2)">Làm lại</button>
+        </div>
+    </div>
+
+    <!-- ==================== BÀI TẬP 3 ==================== -->
+    <div class="exercise-card" id="ex3">
+        <div class="ex-title"><i class="fa-solid fa-pen-clip"></i> Bài Tập 3: Nhập Đáp Án Trực Tiếp</div>
+        <div class="problem-statement">
+            <strong>Đề bài:</strong> Ở một loài thực vật tự thụ phấn có $2n = 24$. Trong quá trình giảm phân I, có <b>16% tế bào sinh giao tử đực</b> và <b>12% tế bào sinh giao tử cái</b> bị rối loạn phân li ở cặp NST số 3, giảm phân II diễn ra bình thường.
+        </div>
+
+        <div class="direct-answer-box">
+            <div class="q-row">
+                <label>a) Tỉ lệ giao tử đực đột biến mang 13 NST $(n + 1)$ bằng bao nhiêu %?</label>
+                <input type="text" class="blank-input" data-ex="3" data-ans="8" style="width:100px;"> %
+                <span class="correct-hint">(Đáp án: 8%)</span>
+            </div>
+            <div class="q-row">
+                <label>b) Tỉ lệ hợp tử đột biến thể ba $(2n + 1 = 25\text{ NST})$ thu được là bao nhiêu %?</label>
+                <input type="text" class="blank-input" data-ex="3" data-ans="12.32" style="width:100px;"> %
+                <span class="correct-hint">(Đáp án: 12.32%)</span>
+            </div>
+        </div>
+
+        <div class="solution-box" id="sol3">
+            <h4><i class="fa-solid fa-lightbulb"></i> Chi tiết cách giải Bài 3:</h4>
+            <p><b>1. Tính tỉ lệ giao tử:</b></p>
+            <p>• Đực: $16\%$ tế bào ĐB $\rightarrow$ Giao tử $(n + 1 = 13) = 8\%$, Giao tử $(n - 1 = 11) = 8\%$, Giao tử bình thường $(n = 12) = 84\%$.</p>
+            <p>• Cái: $12\%$ tế bào ĐB $\rightarrow$ Giao tử $(n + 1 = 13) = 6\%$, Giao tử $(n - 1 = 11) = 6\%$, Giao tử bình thường $(n = 12) = 88\%$.</p>
+            <p><b>2. Trả lời câu hỏi:</b></p>
+            <p>• <b>Câu a:</b> Tỉ lệ giao tử đực $(n + 1) = 16\% / 2 = \mathbf{8\%}$.</p>
+            <p>• Hợp tử thể ba $(2n + 1 = 25)$ kết hợp từ:</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- TH1: Đực $(n + 1) \times$ Cái $(n) = 8\% \times 88\% = 7.04\%$</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;- TH2: Đực $(n) \times$ Cái $(n + 1) = 84\% \times 6\% = 5.04\%$</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;$\Rightarrow$ Tổng tỉ lệ hợp tử thể ba $= 7.04\% + 5.04\% = \mathbf{12.32\%}$.</p>
+        </div>
+
+        <div class="score-board" id="scoreBoard3">
+            <div class="score-number" id="scoreVal3">0 / 1.0</div>
+            <p id="comment3"></p>
+        </div>
+
+        <div class="action-area">
+            <button class="btn btn-submit" onclick="checkEx3()"><i class="fa-solid fa-check"></i> Nộp Bài 3</button>
+            <button class="btn btn-reset" onclick="resetEx(3)">Làm lại</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function evaluateInputs(inputs) {
+        let correct = 0;
+        inputs.forEach(input => {
+            const expected = input.getAttribute('data-ans').trim();
+            const val = input.value.trim().replace('%', '');
+            if (val === expected) {
+                input.classList.remove('wrong');
+                input.classList.add('correct');
+                correct++;
+            } else {
+                input.classList.remove('correct');
+                input.classList.add('wrong');
+            }
+        });
+        return { correct, total: inputs.length };
+    }
+
+    function showHints(card) {
+        card.querySelectorAll('.correct-hint').forEach(h => h.style.display = 'inline');
+    }
+
+    // Chấm Bài 1
+    function checkEx1() {
+        const card = document.getElementById('ex1');
+        const inputs = card.querySelectorAll('.blank-input');
+        const res = evaluateInputs(inputs);
+        showHints(card);
+
+        const score = (res.correct / res.total).toFixed(2);
+        document.getElementById('scoreVal1').innerText = `${score} / 1.0 Điểm`;
+        document.getElementById('comment1').innerText = score == 1 ? "Tuyệt vời! Bạn làm chính xác 100%." : "Hãy kiểm tra các ô báo đỏ và đối chiếu đáp án nhé!";
+        document.getElementById('scoreBoard1').style.display = 'block';
+    }
+
+    // Chấm Bài 2
+    function checkEx2() {
+        const card = document.getElementById('ex2');
+        const inputs = card.querySelectorAll('.blank-input');
+        const res = evaluateInputs(inputs);
+        showHints(card);
+
+        const score = (res.correct / res.total).toFixed(2);
+        document.getElementById('scoreVal2').innerText = `${score} / 1.0 Điểm`;
+        document.getElementById('comment2').innerText = score == 1 ? "Hoàn hảo! Bạn tính toán rất chính xác." : "Chưa chính xác. Đọc kĩ hướng dẫn chi tiết bên dưới nhé!";
+        
+        const sol = document.getElementById('sol2');
+        sol.style.display = 'block';
+        document.getElementById('scoreBoard2').style.display = 'block';
+        
+        if (window.MathJax) MathJax.typesetPromise([sol]);
+    }
+
+    // Chấm Bài 3
+    function checkEx3() {
+        const card = document.getElementById('ex3');
+        const inputs = card.querySelectorAll('.blank-input');
+        const res = evaluateInputs(inputs);
+        showHints(card);
+
+        const score = (res.correct / res.total).toFixed(2);
+        document.getElementById('scoreVal3').innerText = `${score} / 1.0 Điểm`;
+        document.getElementById('comment3').innerText = score == 1 ? "Xuất sắc! Kết quả hoàn toàn đúng." : "Hãy xem lại lời giải chi tiết bên dưới để biết cách tính.";
+        
+        const sol = document.getElementById('sol3');
+        sol.style.display = 'block';
+        document.getElementById('scoreBoard3').style.display = 'block';
+
+        if (window.MathJax) MathJax.typesetPromise([sol]);
+    }
+
+    // Reset làm lại
+    function resetEx(num) {
+        const card = document.getElementById(`ex${num}`);
+        card.querySelectorAll('.blank-input').forEach(i => {
+            i.value = '';
+            i.classList.remove('correct', 'wrong');
+        });
+        card.querySelectorAll('.correct-hint').forEach(h => h.style.display = 'none');
+        
+        const sol = document.getElementById(`sol${num}`);
+        if (sol) sol.style.display = 'none';
+
+        document.getElementById(`scoreBoard${num}`).style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
